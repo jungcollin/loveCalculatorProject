@@ -38,4 +38,7 @@ app.post('/love_post', function(req, res) {
   });
 })
 
-// api
+app.post("/ajax_send_form", function (req, res) {
+  var responseData = req.body;
+  res.json(responseData);
+})
