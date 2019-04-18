@@ -14,10 +14,7 @@
   </form>
 
   <button class="sendAjax">send Ajax</button>
-
-  <div class="render">
-
-  </div>
+  <div class="render"></div>
 
   <script>
     document.querySelector('.sendAjax').addEventListener('click', function(e) {
@@ -28,19 +25,43 @@
       }
 
       sendTo('http://127.0.0.1:3000/ajax_send_form', inputData);
+
+      form.reset();
     })
 
     function sendTo(url, data) {
       var data = JSON.stringify(data);
-      
       var xhr = new XMLHttpRequest();
+
+      xhr.onreadystatechange = function() {
+        console.log(this.readyState);
+        if (this.readyState == 4 && this.status == 200) {
+          var res = this.responseText;
+
+            document.querySelector('.render').innerHTML = res;
+        } else {
+          document.querySelector('.render').innerHTML = 'Loading...';
+        }
+      };
+
       xhr.open('POST', url);
       xhr.setRequestHeader('Content-Type', "application/json");
       xhr.send(data);
 
       xhr.addEventListener('load', function() {
-        var result = JSON.parse(xhr.responseText);
-        document.querySelector('.render').innerHTML = result.yourName;
+        var result = JSON.parse(this.responseText);
+        
+        let renderResult = '';
+
+        for (const key in result) {
+          if(result.hasOwnProperty(key)) {
+            renderResult += `<p>${key} : ${result[key]}<p>`
+          } else {
+            // prototype chain property
+          }
+        }
+
+        document.querySelector('.render').innerHTML = renderResult;
       })
     }
   </script>
@@ -48,3 +69,8 @@
   
 </body>
 </html>
+
+<div class="card">
+  <h2 class="card__title"></h2>
+  <p class="card__paragraph"></p>
+</div>
