@@ -8,37 +8,52 @@
 </head>
 <body>
   <form action="/love_post" method="post" id="loveForm">
-    Your Name : <input type="text" name="yourName" autocomplete="off"><br />
-    Partner Name <input type="text" name="partnerName" autocomplete="off"><br />
-    <input type="submit" value="Submit">
+    <div class="input_group">
+      <label for="yourName">Your Name</label> : <input id="yourName" type="text" name="yourName" autocomplete="off"><br />
+    </div>
+    <div class="input_group">
+        <label for="partnerName">Partner Name</label> : <input id="partnerName" type="text" name="partnerName" autocomplete="off">
+    </div>
+    <!-- <input type="submit" value="Submit"> -->
   </form>
 
-  <button class="sendAjax">send Ajax</button>
+  <button class="btn_submit">Submit</button>
   <div class="render"></div>
 
   <script>
-    document.querySelector('.sendAjax').addEventListener('click', function(e) {
+    document.querySelector('.btn_submit').addEventListener('click', function(e) {
       var form = document.querySelector('#loveForm');
       var inputData = {
-        yourName : form.elements[0].value,
-        partnerName : form.elements[1].value 
+        yourName : document.querySelector('#yourName').value,
+        partnerName : document.querySelector('#partnerName').value 
       }
-
-      sendTo('http://127.0.0.1:3000/ajax_send_form', inputData);
-
+      sendToForm('http://127.0.0.1:3000/ajax_send_form', inputData);
       form.reset();
-    })
+    });
 
-    function sendTo(url, data) {
+    function sendToForm(url, data) {
       var data = JSON.stringify(data);
       var xhr = new XMLHttpRequest();
 
       xhr.onreadystatechange = function() {
-        console.log(this.readyState);
-        if (this.readyState == 4 && this.status == 200) {
-          var res = this.responseText;
+        console.log(xhr.readyState);
+        if (xhr.readyState == 4 && xhr.status == 200) {
+          // var res = xhr;
+          // alert(res);
+          // document.querySelector('.render').innerHTML = res;
+          var result = JSON.parse(this.responseText);
+        
+          let renderResult = '';
 
-            document.querySelector('.render').innerHTML = res;
+          for (const key in result) {
+            if(result.hasOwnProperty(key)) {
+              renderResult += `<p>${key} : ${result[key]}<p>`
+            } else {
+              // prototype chain property
+            }
+          }
+
+          document.querySelector('.render').innerHTML = renderResult;
         } else {
           document.querySelector('.render').innerHTML = 'Loading...';
         }
@@ -48,21 +63,21 @@
       xhr.setRequestHeader('Content-Type', "application/json");
       xhr.send(data);
 
-      xhr.addEventListener('load', function() {
-        var result = JSON.parse(this.responseText);
+      // xhr.addEventListener('load', function() {
+      //   var result = JSON.parse(this.responseText);
         
-        let renderResult = '';
+      //   let renderResult = '';
 
-        for (const key in result) {
-          if(result.hasOwnProperty(key)) {
-            renderResult += `<p>${key} : ${result[key]}<p>`
-          } else {
-            // prototype chain property
-          }
-        }
+      //   for (const key in result) {
+      //     if(result.hasOwnProperty(key)) {
+      //       renderResult += `<p>${key} : ${result[key]}<p>`
+      //     } else {
+      //       // prototype chain property
+      //     }
+      //   }
 
-        document.querySelector('.render').innerHTML = renderResult;
-      })
+      //   document.querySelector('.render').innerHTML = renderResult;
+      // })
     }
   </script>
 
