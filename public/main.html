@@ -5,23 +5,33 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta http-equiv="X-UA-Compatible" content="ie=edge">
   <title>Love Calculator</title>
+  <link rel="stylesheet" href="/css/style.css">
 </head>
 <body>
-  <form action="/love_post" method="post" id="loveForm">
-    <div class="input_group">
-      <label for="yourName">Your Name</label> : <input id="yourName" type="text" name="yourName" autocomplete="off"><br />
-    </div>
-    <div class="input_group">
-        <label for="partnerName">Partner Name</label> : <input id="partnerName" type="text" name="partnerName" autocomplete="off">
-    </div>
-    <!-- <input type="submit" value="Submit"> -->
-  </form>
-
-  <button class="btn_submit">Submit</button>
-  <div class="render"></div>
+  <div id="wrap">
+    <h1 class="title">Love Calculator</h1>
+    <form action="/love_post" method="post" id="loveForm">
+      <h2 class="form_title">
+        DETAILS
+      </h2>
+      <div class="input_group">
+        <label for="yourName">Your Name</label>
+        <input id="yourName" type="text" name="yourName" autocomplete="off"><br />
+      </div>
+      <div class="input_group">
+        <label for="partnerName">Partner Name</label>
+        <input id="partnerName" type="text" name="partnerName" autocomplete="off">
+      </div>
+      <!-- <input type="submit" value="Submit"> -->
+      <button class="btn_submit">Submit</button>
+    </form>
+  
+    <div class="render"></div>
+  </div>
 
   <script>
     document.querySelector('.btn_submit').addEventListener('click', function(e) {
+      e.preventDefault();
       var form = document.querySelector('#loveForm');
       var inputData = {
         yourName : document.querySelector('#yourName').value,
@@ -42,20 +52,43 @@
           // alert(res);
           // document.querySelector('.render').innerHTML = res;
           var result = JSON.parse(this.responseText);
-        
-          let renderResult = '';
+          var svgText = '';
 
-          for (const key in result) {
-            if(result.hasOwnProperty(key)) {
-              renderResult += `<p>${key} : ${result[key]}<p>`
-            } else {
-              // prototype chain property
-            }
+          console.log(result);
+
+          if(result.percentage >= 80) {
+            svgText = 'verygood'
+          } else if(result.percentage >= 60) {
+            svgText = 'sogood'
+          } else if(result.percentage >= 40) {
+            svgText = 'soso'
+          } else if(result.percentage >= 20) {
+            svgText = 'sosad'
+          } else {
+            svgText = 'verysad'
           }
+          
+          let renderResult = `
+            <p class="result_text">YOUR NAME : <span>${result.yourName}</span></p>
+            <p class="result_text">PARTNER NAME : <span>${result.partnerName}</span></p>
+            <p class="result_text">PERCENTAGE : <span>${result.percentage}%</span></p>
+            <p class="result_text"><span>${result.resultNum}</span></p>
+            <svg class="icon">
+              <image href="/images/${svgText}.svg" />
+            </svg>
+          `
 
-          document.querySelector('.render').innerHTML = renderResult;
+          // for (const key in result) {
+          //   if(result.hasOwnProperty(key)) {
+          //     renderResult += `<p class="result_text">${key} : ${result[key]}<p>`
+          //   } else {
+          //     // prototype chain property
+          //   }
+          // }
+          document.querySelector('#loveForm').innerHTML = renderResult;
         } else {
-          document.querySelector('.render').innerHTML = 'Loading...';
+          // document.querySelector('.render').innerHTML = 'Loading...';
+          document.querySelector('#loveForm').innerHTML = `<p class="loading">Loading...</p>`;
         }
       };
 
