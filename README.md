@@ -10,7 +10,7 @@
 
 ## 테스트 화면
 
-  - [TEST](public/images/lovecalculator.gif)
+  - ![구현화면](public/images/lovecalculator.gif)
 
 ## 설명
 
